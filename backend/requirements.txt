@@ -1,0 +1,59 @@
+# Smart Portfolio Agent - Python Dependencies
+
+# Core Framework
+fastapi>=0.104.1
+uvicorn[standard]>=0.24.0
+pydantic>=2.5.0
+python-dotenv>=1.0.0
+
+# LLM & Agent Orchestration
+langgraph>=0.2.55
+langchain>=0.3.7
+langchain-openai>=0.2.10
+langchain-core>=0.3.15
+
+# Financial Data APIs
+yfinance>=0.2.44              # Yahoo Finance (market data)
+pandas>=2.1.0                 # Data manipulation
+numpy>=1.26.0                 # Numerical operations
+
+# PDF Processing (CapitalCube reports)
+pypdf>=4.0.0                  # PDF reading
+pdfplumber>=0.11.0            # Advanced PDF parsing
+tabula-py>=2.9.0              # Table extraction (optional)
+
+# HTTP Clients
+httpx>=0.25.0                 # Async HTTP client
+requests>=2.31.0              # Sync HTTP client
+
+# Caching & Storage
+redis>=5.0.0                  # Redis client for caching
+python-redis>=0.1.4
+
+# Data Validation & Serialization
+pydantic-settings>=2.1.0
+email-validator>=2.1.0
+
+# Observability & Monitoring
+arize-otel>=0.8.1                                    # Arize Phoenix integration
+openinference-instrumentation-langchain>=0.1.19       # LangChain tracing
+openinference-instrumentation-litellm>=0.1.0          # LiteLLM tracing
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+httpx-test>=0.23.0
+
+# Development
+black>=23.0.0                 # Code formatting
+flake8>=6.1.0                 # Linting
+mypy>=1.7.0                   # Type checking
+pre-commit>=3.5.0             # Git hooks
+
+# Utilities
+python-dateutil>=2.8.2
+pytz>=2023.3
+

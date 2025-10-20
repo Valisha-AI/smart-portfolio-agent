@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Portfolio - CapitalCube Powered</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .input-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            height: fit-content;
+        }
+
+        .input-panel h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .risk-pills {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .risk-pill {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .risk-pill:hover {
+            border-color: #667eea;
+        }
+
+        .risk-pill.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 25px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .generate-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .results-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .results-panel.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .summary-card .value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+            margin-top: 10px;
+        }
+
+        .summary-card .label {
+            color: #666;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .allocation-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin: 30px 0;
+        }
+
+        .allocation-table thead th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .allocation-table thead th:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .allocation-table thead th:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .allocation-table tbody tr {
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .allocation-table tbody tr:hover {
+            background: #e9ecef;
+            transform: scale(1.02);
+        }
+
+        .allocation-table tbody td {
+            padding: 15px;
+            border: none;
+        }
+
+        .allocation-table tbody tr td:first-child {
+            border-radius: 10px 0 0 10px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .allocation-table tbody tr td:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .score-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .score-elite {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .score-strong {
+            background: #2196F3;
+            color: white;
+        }
+
+        .score-average {
+            background: #FF9800;
+            color: white;
+        }
+
+        .score-weak {
+            background: #f44336;
+            color: white;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .chart-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .chart-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .rationale-box {
+            background: #e3f2fd;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #2196F3;
+            margin: 20px 0;
+        }
+
+        .rationale-box h3 {
+            color: #1976D2;
+            margin-bottom: 15px;
+        }
+
+        .rationale-box p {
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .insights-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .insights-list li {
+            padding: 15px;
+            background: #f1f8e9;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 4px solid #8BC34A;
+        }
+
+        .insights-list li:before {
+            content: "💡 ";
+            margin-right: 10px;
+        }
+
+        .disclaimer {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+            margin-top: 30px;
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Smart Portfolio</h1>
+            <p>AI-Powered Portfolio Allocation with CapitalCube Analytics</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Input Panel -->
+            <div class="input-panel">
+                <h2>Configure Your Portfolio</h2>
+                
+                <div class="form-group">
+                    <label for="ticker">Target Ticker Symbol</label>
+                    <input type="text" id="ticker" placeholder="e.g., AAPL, TSLA, HOOD" value="AAPL">
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Investment Amount ($)</label>
+                    <input type="number" id="amount" placeholder="10000" value="10000" min="1000" max="1000000">
+                </div>
+
+                <div class="form-group">
+                    <label>Risk Tolerance</label>
+                    <div class="risk-pills">
+                        <div class="risk-pill" data-risk="low">
+                            🛡️ Low
+                        </div>
+                        <div class="risk-pill active" data-risk="medium">
+                            ⚖️ Medium
+                        </div>
+                        <div class="risk-pill" data-risk="high">
+                            🚀 High
+                        </div>
+                    </div>
+                    <input type="hidden" id="risk" value="medium">
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="includeETFs" checked>
+                    <label for="includeETFs">Include sector ETFs for diversification</label>
+                </div>
+
+                <button class="generate-btn" onclick="generatePortfolio()">
+                    Generate Portfolio
+                </button>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="results-panel" id="resultsPanel">
+                <div id="loadingState" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing market data and generating your portfolio...</p>
+                </div>
+
+                <div id="resultsContent" style="display: none;">
+                    <!-- Summary Cards -->
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <div class="label">Total Holdings</div>
+                            <div class="value" id="totalHoldings">-</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="label">Avg. Quality Score</div>
+                            <div class="value" id="avgScore">-</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="label">Risk Profile</div>
+                            <div class="value" id="riskProfile">-</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="label">Expected Volatility</div>
+                            <div class="value" style="font-size: 1.2em;" id="volatility">-</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="charts-container">
+                        <div class="chart-box">
+                            <h3>Portfolio Allocation</h3>
+                            <canvas id="allocationChart"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <h3>Sector Concentration</h3>
+                            <canvas id="sectorChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Allocation Table -->
+                    <h3 style="color: #667eea; margin: 30px 0 20px;">Holdings Breakdown</h3>
+                    <table class="allocation-table">
+                        <thead>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Company</th>
+                                <th>Allocation</th>
+                                <th>Amount</th>
+                                <th>Quality Score</th>
+                                <th>Market Cap</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allocationTableBody">
+                        </tbody>
+                    </table>
+
+                    <!-- Rationale -->
+                    <div class="rationale-box">
+                        <h3>Portfolio Rationale</h3>
+                        <p id="rationaleText"></p>
+                    </div>
+
+                    <!-- Key Insights -->
+                    <h3 style="color: #667eea; margin: 30px 0 15px;">Key Insights</h3>
+                    <ul class="insights-list" id="insightsList">
+                    </ul>
+
+                    <!-- Disclaimer -->
+                    <div class="disclaimer">
+                        <strong>⚠️ Disclaimer:</strong> Past performance does not guarantee future results. 
+                        All investments carry risk of loss. This allocation is for informational purposes only 
+                        and does not constitute financial advice. Consult a licensed financial advisor before 
+                        making investment decisions.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Risk pill selection
+        document.querySelectorAll('.risk-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                document.querySelectorAll('.risk-pill').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('risk').value = this.dataset.risk;
+            });
+        });
+
+        // Generate Portfolio
+        async function generatePortfolio() {
+            const ticker = document.getElementById('ticker').value.toUpperCase();
+            const amount = parseFloat(document.getElementById('amount').value);
+            const risk = document.getElementById('risk').value;
+            const includeETFs = document.getElementById('includeETFs').checked;
+
+            if (!ticker || !amount || amount < 1000) {
+                alert('Please enter a valid ticker and amount (minimum $1,000)');
+                return;
+            }
+
+            // Show results panel and loading state
+            const resultsPanel = document.getElementById('resultsPanel');
+            const loadingState = document.getElementById('loadingState');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            resultsPanel.classList.add('show');
+            loadingState.style.display = 'block';
+            resultsContent.style.display = 'none';
+
+            try {
+                const response = await fetch('http://localhost:8002/api/v1/portfolio/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ticker: ticker,
+                        investment_amount: amount,
+                        risk_level: risk,
+                        include_etfs: includeETFs,
+                        max_holdings: 5
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Portfolio generation failed');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                alert('Error: ' + error.message);
+                console.error(error);
+            } finally {
+                loadingState.style.display = 'none';
+                resultsContent.style.display = 'block';
+            }
+        }
+
+        function displayResults(data) {
+            // Update summary cards
+            document.getElementById('totalHoldings').textContent = data.summary.total_holdings;
+            document.getElementById('avgScore').textContent = data.summary.average_earnings_quality.toFixed(1) + '/5';
+            document.getElementById('riskProfile').textContent = data.summary.risk_profile.toUpperCase();
+            document.getElementById('volatility').textContent = data.summary.expected_volatility;
+
+            // Update allocation table
+            const tbody = document.getElementById('allocationTableBody');
+            tbody.innerHTML = '';
+            
+            data.allocation.forEach(item => {
+                const row = tbody.insertRow();
+                const score = item.earnings_quality_score;
+                const scoreBadge = score 
+                    ? `<span class="score-badge ${getScoreClass(score)}">${score.toFixed(1)}/5</span>`
+                    : '<span class="score-badge" style="background: #999;">N/A</span>';
+
+                row.innerHTML = `
+                    <td><strong>${item.ticker}</strong></td>
+                    <td>${item.company_name}</td>
+                    <td><strong>${item.allocation_percent}%</strong></td>
+                    <td>$${item.allocation_amount.toLocaleString()}</td>
+                    <td>${scoreBadge}</td>
+                    <td>${item.market_cap}</td>
+                `;
+            });
+
+            // Update rationale
+            document.getElementById('rationaleText').textContent = data.rationale;
+
+            // Update insights
+            const insightsList = document.getElementById('insightsList');
+            insightsList.innerHTML = '';
+            data.summary.key_insights.forEach(insight => {
+                const li = document.createElement('li');
+                li.textContent = insight;
+                insightsList.appendChild(li);
+            });
+
+            // Create charts
+            createAllocationChart(data.allocation);
+            createSectorChart(data.summary.sector_concentration);
+        }
+
+        function getScoreClass(score) {
+            if (score >= 4.5) return 'score-elite';
+            if (score >= 3.5) return 'score-strong';
+            if (score >= 2.5) return 'score-average';
+            return 'score-weak';
+        }
+
+        let allocationChart = null;
+        let sectorChart = null;
+
+        function createAllocationChart(allocation) {
+            const ctx = document.getElementById('allocationChart');
+            
+            if (allocationChart) {
+                allocationChart.destroy();
+            }
+
+            const colors = [
+                '#667eea', '#764ba2', '#f093fb', '#4facfe', 
+                '#43e97b', '#fa709a', '#fee140', '#30cfd0'
+            ];
+
+            allocationChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: allocation.map(item => item.ticker),
+                    datasets: [{
+                        data: allocation.map(item => item.allocation_percent),
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createSectorChart(sectors) {
+            const ctx = document.getElementById('sectorChart');
+            
+            if (sectorChart) {
+                sectorChart.destroy();
+            }
+
+            const colors = [
+                '#667eea', '#764ba2', '#f093fb', '#4facfe', 
+                '#43e97b', '#fa709a'
+            ];
+
+            sectorChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(sectors),
+                    datasets: [{
+                        label: 'Sector %',
+                        data: Object.values(sectors),
+                        backgroundColor: colors,
+                        borderWidth: 0,
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('ticker').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') generatePortfolio();
+        });
+        document.getElementById('amount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') generatePortfolio();
+        });
+    </script>
+</body>
+</html>
+
