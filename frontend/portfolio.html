@@ -549,7 +549,12 @@
             resultsContent.style.display = 'none';
 
             try {
-                const response = await fetch('http://localhost:8002/api/v1/portfolio/generate', {
+                // Use relative URL - works both locally and on Render
+                const apiUrl = window.location.hostname === 'localhost' 
+                    ? 'http://localhost:8000/api/v1/portfolio/generate'
+                    : '/api/v1/portfolio/generate';
+                
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -730,4 +735,7 @@
     </script>
 </body>
 </html>
+
+
+
 
