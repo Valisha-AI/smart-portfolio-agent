@@ -11,6 +11,10 @@ from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -103,13 +107,21 @@ async def api_info():
 @app.get("/health")
 async def health_check():
     """Detailed health check."""
+    try:
+        from config.tracing import get_tracing_status
+        tracing_status = get_tracing_status()
+    except:
+        tracing_status = {"enabled": False}
+    
     return {
         "status": "healthy",
         "checks": {
             "api": "ok",
             "llm": "ok" if os.getenv("OPENAI_API_KEY") else "missing_key",
-            "cache": "ok" if os.getenv("REDIS_URL") else "not_configured"
-        }
+            "cache": "ok" if os.getenv("REDIS_URL") else "not_configured",
+            "tracing": "ok" if tracing_status.get("enabled") else "not_configured"
+        },
+        "tracing": tracing_status
     }
 
 @app.post("/api/v1/portfolio/generate", response_model=PortfolioResponse)
@@ -200,6 +212,19 @@ async def startup_event():
     print(f"🔑 OpenAI API Key: {'✅ Configured' if os.getenv('OPENAI_API_KEY') else '❌ Missing'}")
     print(f"📈 CapitalCube: {'✅ Configured' if os.getenv('CAPITALCUBE_API_KEY') else '⚠️  Not configured'}")
     print(f"💾 Redis: {'✅ Configured' if os.getenv('REDIS_URL') else '⚠️  Not configured'}")
+    
+    # Initialize Arize tracing
+    try:
+        from config.tracing import init_arize_tracing, get_tracing_status
+        tracing_enabled = init_arize_tracing()
+        status = get_tracing_status()
+        if tracing_enabled:
+            print(f"🔍 Arize Tracing: ✅ Enabled (Project: {status['project_name']})")
+        else:
+            print("🔍 Arize Tracing: ⚠️  Not configured (set ARIZE_SPACE_ID and ARIZE_API_KEY)")
+    except Exception as e:
+        print(f"🔍 Arize Tracing: ⚠️  Initialization failed: {e}")
+    
     print("Ready to accept requests!")
 
 @app.on_event("shutdown")

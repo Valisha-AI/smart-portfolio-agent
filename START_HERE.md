@@ -63,18 +63,25 @@ pip install -r backend/requirements.txt
 ### 4. Configure Environment
 ```bash
 cd backend
-cp .env.example .env
+nano .env  # Create and edit .env file
 ```
 
-**Edit `.env` with your API keys:**
+**Add your API keys to `.env`:**
 ```bash
 # Required
 OPENAI_API_KEY=sk-your-openai-key-here
+
+# Recommended: Arize Tracing (see TRACING_QUICK_START.md)
+ARIZE_SPACE_ID=your-arize-space-id-here
+ARIZE_API_KEY=your-arize-api-key-here
+ARIZE_PROJECT_NAME=smart-portfolio-agent
 
 # Optional (for future implementation)
 CAPITALCUBE_API_KEY=your_key_here
 REDIS_URL=redis://localhost:6379
 ```
+
+**Note**: For Arize tracing setup, see **[TRACING_QUICK_START.md](TRACING_QUICK_START.md)** (2 minutes)
 
 ### 5. Run the Server
 ```bash
@@ -164,7 +171,16 @@ curl -X POST http://localhost:8000/api/v1/portfolio/generate \
    - State management
    - Tool implementations
 
-3. **[sample-data/README.md](sample-data/README.md)**
+3. **[TRACING_QUICK_START.md](TRACING_QUICK_START.md)** ⭐ NEW
+   - 2-minute Arize tracing setup
+   - Monitor LLM performance & costs
+   - Debug agent workflows
+
+4. **[ARIZE_TRACING_SETUP.md](ARIZE_TRACING_SETUP.md)**
+   - Detailed tracing configuration
+   - Advanced features & troubleshooting
+
+5. **[sample-data/README.md](sample-data/README.md)**
    - CapitalCube report structure
    - Data extraction examples
    - Parser testing guide
@@ -319,4 +335,7 @@ code /Users/valishagravesnew/Cursor/smart-portfolio-agent
 For questions, refer to:
 - `SMART_PORTFOLIO_AGENT_PRD.md` - What to build
 - `PORTFOLIO_AGENT_FLOW.md` - How to build it
+
+
+
 

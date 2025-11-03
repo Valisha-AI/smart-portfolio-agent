@@ -118,7 +118,8 @@ def generate_portfolio_allocation(
             ticker,
             target_info,
             formatted_allocation,
-            risk_level
+            risk_level,
+            investment_amount
         )
         
         # Add per-holding rationale
@@ -178,7 +179,8 @@ def generate_rationale_llm(
     ticker: str,
     target_info: Dict,
     allocation: List[Dict],
-    risk_level: str
+    risk_level: str,
+    investment_amount: float
 ) -> tuple:
     """Generate portfolio rationale using GPT-4."""
     

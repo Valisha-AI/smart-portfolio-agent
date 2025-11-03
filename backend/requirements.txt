@@ -38,3 +38,11 @@ email-validator>=2.1.0
 python-dateutil>=2.8.2
 pytz>=2023.3
 
+# Arize Tracing & Observability
+openinference-instrumentation-langchain>=0.1.29
+openinference-instrumentation-openai>=0.1.16
+arize-otel>=0.6.0
+opentelemetry-sdk>=1.28.0
+opentelemetry-exporter-otlp>=1.28.0
+openinference-semantic-conventions>=0.1.11
+

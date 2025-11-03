@@ -143,9 +143,10 @@ YAHOO_FINANCE_API_KEY=optional
 # Caching
 REDIS_URL=redis://localhost:6379
 
-# Observability (optional)
+# Observability (recommended - see TRACING_QUICK_START.md)
 ARIZE_SPACE_ID=your_arize_space_id
 ARIZE_API_KEY=your_arize_api_key
+ARIZE_PROJECT_NAME=smart-portfolio-agent
 
 # Rate Limiting
 RATE_LIMIT_PER_HOUR=20
@@ -190,11 +191,35 @@ curl -X POST http://localhost:8000/api/v1/portfolio/generate \
   -d '{"ticker": "HOOD", "investment_amount": 10000, "risk_level": "medium"}'
 ```
 
+## 🔍 Observability & Tracing
+
+The Smart Portfolio Agent includes **Arize tracing** for monitoring LLM performance, debugging agent workflows, and tracking costs.
+
+**Quick Setup:** See **[TRACING_QUICK_START.md](TRACING_QUICK_START.md)** (2 minutes)
+
+**Features:**
+- ✅ End-to-end trace visibility (agent → tools → LLM)
+- ✅ Token usage & cost tracking
+- ✅ Latency monitoring
+- ✅ Error debugging with full stack traces
+- ✅ Prompt/response inspection
+
+**Get started:**
+1. Sign up at [app.arize.com](https://app.arize.com)
+2. Add `ARIZE_SPACE_ID` and `ARIZE_API_KEY` to `.env`
+3. Restart the server
+4. View traces in Arize dashboard
+
+**Full documentation:** [ARIZE_TRACING_SETUP.md](ARIZE_TRACING_SETUP.md)
+
 ## 📚 Documentation
 
 - **[PRD](SMART_PORTFOLIO_AGENT_PRD.md)**: Complete product specification
 - **[Agent Flow](PORTFOLIO_AGENT_FLOW.md)**: Implementation guide with code examples
 - **[Sample Data](sample-data/)**: Reference CapitalCube reports
+- **[Arize Tracing Setup](ARIZE_TRACING_SETUP.md)**: Detailed tracing configuration
+- **[Tracing Quick Start](TRACING_QUICK_START.md)**: 2-minute setup guide
+- **[Troubleshooting](TROUBLESHOOTING.md)**: Debug guide and common issues
 
 ## 🚧 Development Status
 
@@ -232,4 +257,7 @@ MIT License
 ---
 
 **Built with:** LangGraph • FastAPI • OpenAI • CapitalCube • Yahoo Finance
+
+
+
 
